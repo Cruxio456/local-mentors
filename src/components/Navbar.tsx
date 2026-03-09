@@ -1,18 +1,25 @@
 import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageCircle, LogOut, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, signOut } = useAuth();
 
   const links = [
     { label: "Home", href: "/" },
     { label: "Find a Mentor", href: "/find" },
     { label: "Become a Mentor", href: "/teach" },
-    { label: "About", href: "#" },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <motion.nav
@@ -44,23 +51,44 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Log In
-          </button>
-          <Link to="/teach">
-            <button className="px-5 py-2 rounded-lg gradient-accent text-sm font-semibold text-accent-foreground">
-              Start Teaching
-            </button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/chat" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground relative">
+                <MessageCircle className="w-5 h-5" />
+              </Link>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary">
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground">
+                  {profile?.name?.charAt(0)?.toUpperCase() || <User className="w-3 h-3" />}
+                </div>
+                <span className="text-sm font-medium max-w-[100px] truncate">{profile?.name || "User"}</span>
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                title="Sign out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/auth" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Log In
+              </Link>
+              <Link to="/teach">
+                <button className="px-5 py-2 rounded-lg gradient-accent text-sm font-semibold text-accent-foreground">
+                  Start Teaching
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile toggle */}
         <button className="md:hidden" onClick={() => setOpen(!open)}>
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
@@ -77,11 +105,27 @@ const Navbar = () => {
               {l.label}
             </Link>
           ))}
-          <Link to="/teach" onClick={() => setOpen(false)}>
-            <button className="w-full py-2.5 rounded-lg gradient-accent text-sm font-semibold text-accent-foreground">
-              Start Teaching
-            </button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/chat" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">
+                Messages
+              </Link>
+              <button onClick={() => { handleSignOut(); setOpen(false); }} className="text-sm font-medium text-muted-foreground text-left">
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/auth" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">
+                Log In
+              </Link>
+              <Link to="/teach" onClick={() => setOpen(false)}>
+                <button className="w-full py-2.5 rounded-lg gradient-accent text-sm font-semibold text-accent-foreground">
+                  Start Teaching
+                </button>
+              </Link>
+            </>
+          )}
         </motion.div>
       )}
     </motion.nav>
