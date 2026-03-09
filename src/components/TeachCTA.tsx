@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const TeachCTA = () => {
   return (
@@ -40,13 +41,15 @@ const TeachCTA = () => {
                   </span>
                 ))}
               </div>
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow"
-              >
-                Become a Mentor
-              </motion.button>
+              <Link to="/teach">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow"
+                >
+                  Become a Mentor
+                </motion.button>
+              </Link>
             </div>
 
             {/* Earnings illustration */}
