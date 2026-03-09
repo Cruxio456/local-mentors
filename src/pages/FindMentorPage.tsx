@@ -1,24 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Star, MapPin, Filter, ChevronDown } from "lucide-react";
+import { Search, Star, MapPin, Filter, MessageCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BookSessionDialog from "@/components/BookSessionDialog";
 
-const allMentors = [
-  { name: "Priya Sharma", skill: "Classical Guitar", rating: 4.9, sessions: 230, initials: "PS", location: "Koramangala, Bangalore", price: 800, category: "Music", available: true },
-  { name: "Arjun Mehta", skill: "Web Development", rating: 4.8, sessions: 185, initials: "AM", location: "HSR Layout, Bangalore", price: 1200, category: "Coding", available: true },
-  { name: "Kavitha R.", skill: "Watercolor Art", rating: 5.0, sessions: 142, initials: "KR", location: "Indiranagar, Bangalore", price: 600, category: "Art", available: false },
-  { name: "David Chen", skill: "Mandarin Chinese", rating: 4.7, sessions: 310, initials: "DC", location: "Whitefield, Bangalore", price: 900, category: "Language", available: true },
-  { name: "Meera Iyer", skill: "Carnatic Vocals", rating: 4.9, sessions: 198, initials: "MI", location: "JP Nagar, Bangalore", price: 700, category: "Music", available: true },
-  { name: "Rohan Verma", skill: "Python & AI", rating: 4.6, sessions: 95, initials: "RV", location: "Electronic City, Bangalore", price: 1500, category: "Coding", available: true },
-  { name: "Sunita Patel", skill: "Yoga & Fitness", rating: 4.8, sessions: 280, initials: "SP", location: "Jayanagar, Bangalore", price: 500, category: "Fitness", available: false },
-  { name: "Kiran Nair", skill: "Indian Cooking", rating: 4.7, sessions: 160, initials: "KN", location: "Malleshwaram, Bangalore", price: 650, category: "Cooking", available: true },
-];
+interface MentorProfile {
+  id: string;
+  name: string;
+  bio: string | null;
+  skills: string[] | null;
+  rating: number | null;
+  total_sessions: number | null;
+  location: string | null;
+  hourly_rate: number | null;
+  is_available: boolean | null;
+  avatar_url: string | null;
+}
 
 const categories = ["All", "Music", "Coding", "Art", "Language", "Fitness", "Cooking"];
 
-const MentorCard = ({ mentor, index }: { mentor: typeof allMentors[0]; index: number }) => {
+const MentorCard = ({
+  mentor,
+  index,
+  onBook,
+  onChat,
+}: {
+  mentor: MentorProfile;
+  index: number;
+  onBook: () => void;
+  onChat: () => void;
+}) => {
   const colors = ["bg-primary", "bg-accent", "bg-primary/80", "bg-accent/80"];
+  const initials = mentor.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  const skill = mentor.skills?.[0] || "General";
 
   return (
     <motion.div
@@ -32,42 +50,54 @@ const MentorCard = ({ mentor, index }: { mentor: typeof allMentors[0]; index: nu
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className={`w-14 h-14 rounded-full ${colors[index % colors.length]} flex items-center justify-center text-lg font-bold text-primary-foreground shrink-0`}>
-              {mentor.initials}
+              {initials}
             </div>
             <div>
               <h3 className="font-bold text-base">{mentor.name}</h3>
-              <p className="text-sm text-primary font-medium">{mentor.skill}</p>
+              <p className="text-sm text-primary font-medium">{skill}</p>
             </div>
           </div>
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${mentor.available ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-            {mentor.available ? "Available" : "Booked"}
+          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${mentor.is_available ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+            {mentor.is_available ? "Available" : "Booked"}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span className="truncate">{mentor.location}</span>
-        </div>
+        {mentor.location && (
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{mentor.location}</span>
+          </div>
+        )}
         <div className="flex items-center gap-3 text-sm mb-5">
           <div className="flex items-center gap-1">
             <Star className="w-3.5 h-3.5 fill-accent text-accent" />
-            <span className="font-medium">{mentor.rating}</span>
+            <span className="font-medium">{mentor.rating?.toFixed(1) || "0.0"}</span>
           </div>
           <span className="text-muted-foreground">·</span>
-          <span className="text-muted-foreground">{mentor.sessions} sessions</span>
+          <span className="text-muted-foreground">{mentor.total_sessions || 0} sessions</span>
         </div>
 
         <div className="flex items-center justify-between">
           <span className="text-sm">
-            <span className="font-bold text-lg text-foreground">₹{mentor.price}</span>
+            <span className="font-bold text-lg text-foreground">₹{mentor.hourly_rate || 0}</span>
             <span className="text-muted-foreground">/hr</span>
           </span>
-          <button
-            disabled={!mentor.available}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${mentor.available ? "gradient-accent text-accent-foreground hover:shadow-glow" : "bg-muted text-muted-foreground cursor-not-allowed"}`}
-          >
-            Book Session
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={onChat}
+              className="p-2 rounded-lg border border-border hover:border-primary/30 text-muted-foreground hover:text-primary transition-all"
+              title="Message"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onBook}
+              disabled={!mentor.is_available}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${mentor.is_available ? "gradient-accent text-accent-foreground hover:shadow-glow" : "bg-muted text-muted-foreground cursor-not-allowed"}`}
+            >
+              Book Session
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -78,21 +108,68 @@ const FindMentorPage = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("Rating");
+  const [mentors, setMentors] = useState<MentorProfile[]>([]);
+  const [loadingMentors, setLoadingMentors] = useState(true);
+  const [bookingMentor, setBookingMentor] = useState<MentorProfile | null>(null);
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
 
-  const filtered = allMentors.filter((m) => {
-    const matchCat = activeCategory === "All" || m.category === activeCategory;
+  useEffect(() => {
+    fetchMentors();
+  }, []);
+
+  const fetchMentors = async () => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_role", "mentor");
+    if (data) setMentors(data);
+    setLoadingMentors(false);
+  };
+
+  const handleChat = async (mentor: MentorProfile) => {
+    if (!user || !profile) {
+      navigate("/auth");
+      return;
+    }
+
+    // Check existing conversation
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("student_id", profile.id)
+      .eq("mentor_id", mentor.id)
+      .maybeSingle();
+
+    if (existing) {
+      navigate("/chat");
+      return;
+    }
+
+    // Create new conversation
+    await supabase.from("conversations").insert({
+      student_id: profile.id,
+      mentor_id: mentor.id,
+    });
+    navigate("/chat");
+  };
+
+  const filtered = mentors.filter((m) => {
+    const matchCat = activeCategory === "All" || (m.skills || []).some((s) =>
+      s.toLowerCase().includes(activeCategory.toLowerCase())
+    );
     const matchSearch =
       m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.skill.toLowerCase().includes(search.toLowerCase()) ||
-      m.location.toLowerCase().includes(search.toLowerCase());
+      (m.skills || []).some((s) => s.toLowerCase().includes(search.toLowerCase())) ||
+      (m.location || "").toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
   const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === "Rating") return b.rating - a.rating;
-    if (sortBy === "Price: Low") return a.price - b.price;
-    if (sortBy === "Price: High") return b.price - a.price;
-    if (sortBy === "Sessions") return b.sessions - a.sessions;
+    if (sortBy === "Rating") return (b.rating || 0) - (a.rating || 0);
+    if (sortBy === "Price: Low") return (a.hourly_rate || 0) - (b.hourly_rate || 0);
+    if (sortBy === "Price: High") return (b.hourly_rate || 0) - (a.hourly_rate || 0);
+    if (sortBy === "Sessions") return (b.total_sessions || 0) - (a.total_sessions || 0);
     return 0;
   });
 
@@ -100,7 +177,6 @@ const FindMentorPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Header */}
       <section className="pt-28 pb-12 px-6 gradient-hero relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-primary/5 blur-3xl" />
@@ -111,8 +187,6 @@ const FindMentorPage = () => {
               Find your <span className="text-gradient">perfect mentor</span>
             </h1>
             <p className="text-muted-foreground text-lg mb-8">Browse skilled teachers near you, read reviews, and book a session instantly.</p>
-
-            {/* Search bar */}
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -132,7 +206,6 @@ const FindMentorPage = () => {
         </div>
       </section>
 
-      {/* Filter bar */}
       <div className="sticky top-16 z-30 bg-background/90 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-6 py-3 flex items-center gap-3 overflow-x-auto scrollbar-hide">
           {categories.map((cat) => (
@@ -160,17 +233,28 @@ const FindMentorPage = () => {
         </div>
       </div>
 
-      {/* Results */}
       <section className="py-10">
         <div className="container mx-auto px-6">
           <p className="text-sm text-muted-foreground mb-6">
             Showing <strong className="text-foreground">{sorted.length}</strong> mentors
             {activeCategory !== "All" && <> in <span className="text-primary">{activeCategory}</span></>}
           </p>
-          {sorted.length > 0 ? (
+          {loadingMentors ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="gradient-card rounded-xl border border-border/50 p-6 animate-pulse h-56" />
+              ))}
+            </div>
+          ) : sorted.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {sorted.map((m, i) => (
-                <MentorCard key={m.name} mentor={m} index={i} />
+                <MentorCard
+                  key={m.id}
+                  mentor={m}
+                  index={i}
+                  onBook={() => setBookingMentor(m)}
+                  onChat={() => handleChat(m)}
+                />
               ))}
             </div>
           ) : (
@@ -185,6 +269,20 @@ const FindMentorPage = () => {
           )}
         </div>
       </section>
+
+      {bookingMentor && (
+        <BookSessionDialog
+          open={!!bookingMentor}
+          onClose={() => setBookingMentor(null)}
+          mentor={{
+            id: bookingMentor.id,
+            name: bookingMentor.name,
+            skill: bookingMentor.skills?.[0] || "General",
+            price: bookingMentor.hourly_rate || 0,
+            initials: bookingMentor.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+          }}
+        />
+      )}
 
       <Footer />
     </div>
