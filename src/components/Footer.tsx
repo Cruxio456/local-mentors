@@ -11,14 +11,14 @@ const Footer = () => {
                 <circle cx="10" cy="22" r="3" fill="hsl(152 45% 6%)" />
                 <circle cx="18" cy="18" r="3" fill="hsl(80 65% 55%)" />
               </svg>
-              <span className="font-display font-bold text-lg">SkillNest</span>
+              <span className="font-display font-bold text-lg">Local Mentor</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Connecting local mentors with students. Learn, teach, and grow together.
             </p>
           </div>
           {[
-            { title: "Platform", links: ["Browse Mentors", "Categories", "Become a Mentor", "How It Works"] },
+            { title: "Platform", links: ["Find Mentors", "Categories", "Become a Mentor", "How It Works"] },
             { title: "Company", links: ["About Us", "Blog", "Careers", "Contact"] },
             { title: "Support", links: ["Help Center", "Safety", "Terms", "Privacy"] },
           ].map((col) => (
@@ -37,7 +37,7 @@ const Footer = () => {
           ))}
         </div>
         <div className="border-t border-border/50 pt-8 text-center text-xs text-muted-foreground">
-          © 2026 SkillNest. All rights reserved.
+          © 2026 Local Mentor. All rights reserved.
         </div>
       </div>
     </footer>

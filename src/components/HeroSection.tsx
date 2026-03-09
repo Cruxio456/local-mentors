@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import HeroIllustration from "./HeroIllustration";
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen gradient-hero flex items-center overflow-hidden">
-      {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-accent/5 blur-3xl" />
@@ -32,30 +32,34 @@ const HeroSection = () => {
               is just around the corner.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
-              >
-                Find a Mentor
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3.5 rounded-lg border border-primary/30 font-semibold text-primary hover:bg-primary/10 transition-colors"
-              >
-                Start Teaching
-              </motion.button>
+              <Link to="/find">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
+                >
+                  Find a Mentor
+                </motion.button>
+              </Link>
+              <Link to="/teach">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-8 py-3.5 rounded-lg border border-primary/30 font-semibold text-primary hover:bg-primary/10 transition-colors"
+                >
+                  Start Teaching
+                </motion.button>
+              </Link>
             </div>
 
             <div className="flex items-center gap-6 mt-10 text-sm text-muted-foreground">
               <div className="flex -space-x-2">
-                {[0, 1, 2, 3].map((i) => (
+                {["A", "K", "M", "S"].map((letter, i) => (
                   <div
                     key={i}
                     className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-xs font-medium text-secondary-foreground"
                   >
-                    {["A", "K", "M", "S"][i]}
+                    {letter}
                   </div>
                 ))}
               </div>
