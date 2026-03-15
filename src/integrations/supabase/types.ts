@@ -160,7 +160,7 @@ export type Database = {
           skills: string[] | null
           total_sessions: number | null
           updated_at: string
-          user_id: string
+          user_id: string | null
           user_role: Database["public"]["Enums"]["user_role"]
         }
         Insert: {
@@ -176,7 +176,7 @@ export type Database = {
           skills?: string[] | null
           total_sessions?: number | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           user_role: Database["public"]["Enums"]["user_role"]
         }
         Update: {
@@ -192,7 +192,7 @@ export type Database = {
           skills?: string[] | null
           total_sessions?: number | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           user_role?: Database["public"]["Enums"]["user_role"]
         }
         Relationships: []
