@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Search, Star, MapPin, Filter, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookSessionDialog from "@/components/BookSessionDialog";
