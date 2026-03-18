@@ -20,7 +20,7 @@ const HeroSection = () => {
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 border border-primary/20">
               🌱 Learn locally, grow globally
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               Learn from{" "}
               <span className="text-gradient">mentors</span>
               <br />
@@ -32,20 +32,20 @@ const HeroSection = () => {
               is just around the corner.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/find">
+              <Link to="/find" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
                 >
                   Find a Mentor
                 </motion.button>
               </Link>
-              <Link to="/teach">
+              <Link to="/teach" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-8 py-3.5 rounded-lg border border-primary/30 font-semibold text-primary hover:bg-primary/10 transition-colors"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-lg border border-primary/30 font-semibold text-primary hover:bg-primary/10 transition-colors"
                 >
                   Start Teaching
                 </motion.button>

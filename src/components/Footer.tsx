@@ -2,7 +2,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-border/50 py-16">
       <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <svg viewBox="0 0 32 32" className="w-7 h-7" fill="none">

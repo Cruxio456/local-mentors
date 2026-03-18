@@ -87,7 +87,7 @@ const MentorProfilePage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-6">
+      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
         <div className="container mx-auto max-w-4xl">
           {/* Back link */}
           <Link
@@ -125,14 +125,14 @@ const MentorProfilePage = () => {
           ) : mentor ? (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
               {/* Header */}
-              <div className="gradient-card rounded-2xl border border-border/50 p-8">
-                <div className="flex flex-col md:flex-row items-start gap-6">
-                  <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground shrink-0">
+              <div className="gradient-card rounded-2xl border border-border/50 p-5 sm:p-8">
+                <div className="flex flex-col md:flex-row items-start gap-5 sm:gap-6">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary flex items-center justify-center text-xl sm:text-2xl font-bold text-primary-foreground shrink-0">
                     {initials}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h1 className="text-3xl font-bold">{mentor.name}</h1>
+                      <h1 className="text-2xl sm:text-3xl font-bold">{mentor.name}</h1>
                       <span
                         className={`text-xs px-3 py-1 rounded-full font-medium ${
                           mentor.is_available
