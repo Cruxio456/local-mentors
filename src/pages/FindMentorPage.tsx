@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Search, Star, MapPin, Filter, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookSessionDialog from "@/components/BookSessionDialog";
@@ -48,15 +48,15 @@ const MentorCard = ({
     >
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
+          <Link to={`/mentor/${mentor.id}`} className="flex items-center gap-3 group">
             <div className={`w-14 h-14 rounded-full ${colors[index % colors.length]} flex items-center justify-center text-lg font-bold text-primary-foreground shrink-0`}>
               {initials}
             </div>
             <div>
-              <h3 className="font-bold text-base">{mentor.name}</h3>
+              <h3 className="font-bold text-base group-hover:text-primary transition-colors">{mentor.name}</h3>
               <p className="text-sm text-primary font-medium">{skill}</p>
             </div>
-          </div>
+          </Link>
           <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${mentor.is_available ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
             {mentor.is_available ? "Available" : "Booked"}
           </span>
