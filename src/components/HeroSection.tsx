@@ -32,20 +32,20 @@ const HeroSection = () => {
               is just around the corner.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/find">
+              <Link to="/find" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
                 >
                   Find a Mentor
                 </motion.button>
               </Link>
-              <Link to="/teach">
+              <Link to="/teach" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-8 py-3.5 rounded-lg border border-primary/30 font-semibold text-primary hover:bg-primary/10 transition-colors"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-lg border border-primary/30 font-semibold text-primary hover:bg-primary/10 transition-colors"
                 >
                   Start Teaching
                 </motion.button>
