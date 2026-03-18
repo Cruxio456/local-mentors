@@ -9,6 +9,7 @@ import FindMentorPage from "./pages/FindMentorPage";
 import BecomeMentorPage from "./pages/BecomeMentorPage";
 import AuthPage from "./pages/AuthPage";
 import ChatPage from "./pages/ChatPage";
+import MentorProfilePage from "./pages/MentorProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
