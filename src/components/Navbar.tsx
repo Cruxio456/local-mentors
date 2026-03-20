@@ -53,6 +53,9 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
+              <Link to="/dashboard" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground" title="Dashboard">
+                <LayoutDashboard className="w-5 h-5" />
+              </Link>
               <Link to="/chat" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground relative">
                 <MessageCircle className="w-5 h-5" />
               </Link>
