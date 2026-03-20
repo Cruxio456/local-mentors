@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, MessageCircle, LogOut, User } from "lucide-react";
+import { Menu, X, MessageCircle, LogOut, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
