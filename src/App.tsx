@@ -10,6 +10,7 @@ import BecomeMentorPage from "./pages/BecomeMentorPage";
 import AuthPage from "./pages/AuthPage";
 import ChatPage from "./pages/ChatPage";
 import MentorProfilePage from "./pages/MentorProfilePage";
+import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
