@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, MessageCircle, LogOut, User } from "lucide-react";
+import { Menu, X, MessageCircle, LogOut, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
@@ -53,6 +53,9 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
+              <Link to="/dashboard" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground" title="Dashboard">
+                <LayoutDashboard className="w-5 h-5" />
+              </Link>
               <Link to="/chat" className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground relative">
                 <MessageCircle className="w-5 h-5" />
               </Link>
@@ -107,6 +110,9 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
+              <Link to="/dashboard" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">
+                Dashboard
+              </Link>
               <Link to="/chat" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">
                 Messages
               </Link>
