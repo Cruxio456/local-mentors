@@ -164,7 +164,9 @@ const FindMentorPage = () => {
     navigate("/chat");
   };
 
-  const filtered = mentors.filter((m) => {
+  const activeMentors = showDummy ? [...mentors, ...dummyMentors] : mentors;
+
+  const filtered = activeMentors.filter((m) => {
     const matchCat = activeCategory === "All" || (m.skills || []).some((s) =>
       s.toLowerCase().includes(activeCategory.toLowerCase())
     );
