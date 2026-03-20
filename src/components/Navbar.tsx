@@ -110,6 +110,9 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
+              <Link to="/dashboard" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">
+                Dashboard
+              </Link>
               <Link to="/chat" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">
                 Messages
               </Link>
