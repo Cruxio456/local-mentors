@@ -28,6 +28,7 @@ const App = () => (
             <Route path="/teach" element={<BecomeMentorPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/mentor/:id" element={<MentorProfilePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
