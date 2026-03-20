@@ -104,6 +104,15 @@ const MentorCard = ({
   );
 };
 
+const dummyMentors: MentorProfile[] = [
+  { id: "dummy-1", name: "Ananya Sharma", bio: "Sitar and vocal music teacher with 12 years of experience in Hindustani classical.", skills: ["Music", "Vocals"], rating: 4.8, total_sessions: 134, location: "Jaipur", hourly_rate: 600, is_available: true, avatar_url: null },
+  { id: "dummy-2", name: "Rahul Verma", bio: "Full-stack developer specializing in React and Node.js, mentoring students for 5 years.", skills: ["Coding", "React"], rating: 4.9, total_sessions: 210, location: "Bengaluru", hourly_rate: 800, is_available: true, avatar_url: null },
+  { id: "dummy-3", name: "Priya Nair", bio: "Watercolor and digital art instructor passionate about teaching beginners.", skills: ["Art", "Watercolor"], rating: 4.7, total_sessions: 89, location: "Kochi", hourly_rate: 450, is_available: true, avatar_url: null },
+  { id: "dummy-4", name: "Karan Singh", bio: "Certified fitness trainer focused on calisthenics and home workouts.", skills: ["Fitness", "Calisthenics"], rating: 4.6, total_sessions: 162, location: "Delhi", hourly_rate: 500, is_available: true, avatar_url: null },
+  { id: "dummy-5", name: "Meera Joshi", bio: "French and Spanish language tutor with DELF certification.", skills: ["Language", "French"], rating: 4.9, total_sessions: 97, location: "Pune", hourly_rate: 700, is_available: false, avatar_url: null },
+  { id: "dummy-6", name: "Arjun Patel", bio: "Home chef teaching regional Indian cuisines and baking techniques.", skills: ["Cooking", "Baking"], rating: 4.5, total_sessions: 73, location: "Ahmedabad", hourly_rate: 400, is_available: true, avatar_url: null },
+];
+
 const FindMentorPage = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
@@ -111,6 +120,7 @@ const FindMentorPage = () => {
   const [mentors, setMentors] = useState<MentorProfile[]>([]);
   const [loadingMentors, setLoadingMentors] = useState(true);
   const [bookingMentor, setBookingMentor] = useState<MentorProfile | null>(null);
+  const [showDummy, setShowDummy] = useState(false);
   const { user, profile } = useAuth();
   const navigate = useNavigate();
 
