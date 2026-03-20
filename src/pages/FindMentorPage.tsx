@@ -246,11 +246,18 @@ const FindMentorPage = () => {
       </div>
 
       <section className="py-10">
-        <div className="container mx-auto px-6">
-          <p className="text-sm text-muted-foreground mb-6">
-            Showing <strong className="text-foreground">{sorted.length}</strong> mentors
-            {activeCategory !== "All" && <> in <span className="text-primary">{activeCategory}</span></>}
-          </p>
+        <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-muted-foreground">
+              Showing <strong className="text-foreground">{sorted.length}</strong> mentors
+              {activeCategory !== "All" && <> in <span className="text-primary">{activeCategory}</span></>}
+            </p>
+            <button
+              onClick={() => setShowDummy(!showDummy)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${showDummy ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground border border-border/50"}`}
+            >
+              {showDummy ? "Hide Demo Profiles" : "Show Demo Profiles"}
+            </button>
+          </div>
           {loadingMentors ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {[...Array(4)].map((_, i) => (
