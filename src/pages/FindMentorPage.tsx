@@ -246,7 +246,8 @@ const FindMentorPage = () => {
       </div>
 
       <section className="py-10">
-        <div className="flex items-center justify-between mb-6">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">
               Showing <strong className="text-foreground">{sorted.length}</strong> mentors
               {activeCategory !== "All" && <> in <span className="text-primary">{activeCategory}</span></>}
