@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookSessionDialog from "@/components/BookSessionDialog";
+const MentorMap = lazy(() => import("@/components/MentorMap"));
 
 interface MentorProfile {
   id: string;
