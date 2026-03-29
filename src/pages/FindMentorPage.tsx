@@ -249,19 +249,42 @@ const FindMentorPage = () => {
 
       <section className="py-10">
         <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
             <p className="text-sm text-muted-foreground">
               Showing <strong className="text-foreground">{sorted.length}</strong> mentors
               {activeCategory !== "All" && <> in <span className="text-primary">{activeCategory}</span></>}
             </p>
-            <button
-              onClick={() => setShowDummy(!showDummy)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${showDummy ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground border border-border/50"}`}
-            >
-              {showDummy ? "Hide Demo Profiles" : "Show Demo Profiles"}
-            </button>
+            <div className="flex items-center gap-2">
+              <div className="flex rounded-lg border border-border/50 overflow-hidden">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  title="Grid view"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("map")}
+                  className={`p-2 transition-colors ${viewMode === "map" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  title="Map view"
+                >
+                  <Map className="w-4 h-4" />
+                </button>
+              </div>
+              <button
+                onClick={() => setShowDummy(!showDummy)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${showDummy ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground border border-border/50"}`}
+              >
+                {showDummy ? "Hide Demo" : "Show Demo"}
+              </button>
+            </div>
           </div>
-          {loadingMentors ? (
+
+          {viewMode === "map" ? (
+            <Suspense fallback={<div className="h-[420px] rounded-xl border border-border/50 animate-pulse bg-secondary" />}>
+              <MentorMap mentors={sorted} />
+            </Suspense>
+          ) : loadingMentors ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="gradient-card rounded-xl border border-border/50 p-6 animate-pulse h-56" />
