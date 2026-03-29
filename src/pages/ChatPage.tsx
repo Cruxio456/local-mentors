@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Send, MessageCircle, ArrowLeft } from "lucide-react";
+import { Send, MessageCircle, ArrowLeft, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -178,7 +178,20 @@ const ChatPage = () => {
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
                   {activeConvData.other_initials}
                 </div>
-                <span className="font-medium text-sm">{activeConvData.other_name}</span>
+                <span className="font-medium text-sm flex-1">{activeConvData.other_name}</span>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    const roomId = `localmentor-${activeConv}`;
+                    window.open(`https://meet.jit.si/${roomId}`, "_blank", "noopener,noreferrer");
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
+                  title="Start Video Call"
+                >
+                  <Video className="w-4 h-4" />
+                  <span className="hidden sm:inline">Video Call</span>
+                </motion.button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-4 space-y-3">

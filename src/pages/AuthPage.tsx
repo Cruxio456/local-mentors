@@ -13,6 +13,8 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<"student" | "mentor">("student");
+  const [hourlyRate, setHourlyRate] = useState("");
+  const [skills, setSkills] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -39,7 +41,12 @@ const AuthPage = () => {
         email,
         password,
         options: {
-          data: { name, role },
+          data: {
+            name,
+            role,
+            ...(role === "mentor" && hourlyRate ? { hourly_rate: parseInt(hourlyRate) } : {}),
+            ...(role === "mentor" && skills ? { skills: skills.split(",").map(s => s.trim()).filter(Boolean) } : {}),
+          },
           emailRedirectTo: window.location.origin,
         },
       });
@@ -120,6 +127,34 @@ const AuthPage = () => {
                       ))}
                     </div>
                   </div>
+
+                  {role === "mentor" && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Hourly Rate (₹)</label>
+                        <input
+                          type="number"
+                          required
+                          min="100"
+                          value={hourlyRate}
+                          onChange={(e) => setHourlyRate(e.target.value)}
+                          placeholder="e.g. 800"
+                          className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Skills (comma separated)</label>
+                        <input
+                          type="text"
+                          required
+                          value={skills}
+                          onChange={(e) => setSkills(e.target.value)}
+                          placeholder="e.g. Music, Guitar, Vocals"
+                          className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors"
+                        />
+                      </div>
+                    </>
+                  )}
                 </>
               )}
 
