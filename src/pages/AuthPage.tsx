@@ -127,6 +127,34 @@ const AuthPage = () => {
                       ))}
                     </div>
                   </div>
+
+                  {role === "mentor" && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Hourly Rate (₹)</label>
+                        <input
+                          type="number"
+                          required
+                          min="100"
+                          value={hourlyRate}
+                          onChange={(e) => setHourlyRate(e.target.value)}
+                          placeholder="e.g. 800"
+                          className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Skills (comma separated)</label>
+                        <input
+                          type="text"
+                          required
+                          value={skills}
+                          onChange={(e) => setSkills(e.target.value)}
+                          placeholder="e.g. Music, Guitar, Vocals"
+                          className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors"
+                        />
+                      </div>
+                    </>
+                  )}
                 </>
               )}
 
