@@ -41,7 +41,12 @@ const AuthPage = () => {
         email,
         password,
         options: {
-          data: { name, role },
+          data: {
+            name,
+            role,
+            ...(role === "mentor" && hourlyRate ? { hourly_rate: parseInt(hourlyRate) } : {}),
+            ...(role === "mentor" && skills ? { skills: skills.split(",").map(s => s.trim()).filter(Boolean) } : {}),
+          },
           emailRedirectTo: window.location.origin,
         },
       });
