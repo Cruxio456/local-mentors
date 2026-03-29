@@ -13,6 +13,8 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<"student" | "mentor">("student");
+  const [hourlyRate, setHourlyRate] = useState("");
+  const [skills, setSkills] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
