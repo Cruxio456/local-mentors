@@ -122,6 +122,7 @@ const FindMentorPage = () => {
   const [loadingMentors, setLoadingMentors] = useState(true);
   const [bookingMentor, setBookingMentor] = useState<MentorProfile | null>(null);
   const [showDummy, setShowDummy] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const { user, profile } = useAuth();
   const navigate = useNavigate();
 
