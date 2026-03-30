@@ -155,25 +155,33 @@ const ChatPage = () => {
               </div>
             ) : (
               conversations.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActiveConv(c.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                    activeConv === c.id ? "bg-primary/10" : "hover:bg-secondary"
-                  }`}
-                >
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary shrink-0">
-                    {c.other_initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm truncate">{c.other_name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {c.last_message_at
-                        ? new Date(c.last_message_at).toLocaleDateString()
-                        : "No messages yet"}
+                <div key={c.id} className="flex items-center group">
+                  <button
+                    onClick={() => setActiveConv(c.id)}
+                    className={`flex-1 flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      activeConv === c.id ? "bg-primary/10" : "hover:bg-secondary"
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                      {c.other_initials}
                     </div>
-                  </div>
-                </button>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-sm truncate">{c.other_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {c.last_message_at
+                          ? new Date(c.last_message_at).toLocaleDateString()
+                          : "No messages yet"}
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteConversation(c.id); }}
+                    className="p-2 mr-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all"
+                    title="Delete conversation"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               ))
             )}
           </div>
