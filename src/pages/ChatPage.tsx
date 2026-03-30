@@ -199,6 +199,13 @@ const ChatPage = () => {
                   {activeConvData.other_initials}
                 </div>
                 <span className="font-medium text-sm flex-1">{activeConvData.other_name}</span>
+                <button
+                  onClick={() => deleteConversation(activeConv)}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                  title="Delete conversation"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
