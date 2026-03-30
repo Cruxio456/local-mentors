@@ -113,6 +113,18 @@ const ChatPage = () => {
     setSending(false);
   };
 
+  const deleteConversation = async (convId: string) => {
+    if (!confirm("Delete this conversation and all messages? This cannot be undone.")) return;
+    // Delete messages first, then conversation
+    await supabase.from("messages").delete().eq("conversation_id", convId);
+    await supabase.from("conversations").delete().eq("id", convId);
+    setConversations((prev) => prev.filter((c) => c.id !== convId));
+    if (activeConv === convId) {
+      setActiveConv(null);
+      setMessages([]);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
