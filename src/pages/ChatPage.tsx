@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Send, MessageCircle, ArrowLeft, Video } from "lucide-react";
+import { Send, MessageCircle, ArrowLeft, Video, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -113,6 +113,18 @@ const ChatPage = () => {
     setSending(false);
   };
 
+  const deleteConversation = async (convId: string) => {
+    if (!confirm("Delete this conversation and all messages? This cannot be undone.")) return;
+    // Delete messages first, then conversation
+    await supabase.from("messages").delete().eq("conversation_id", convId);
+    await supabase.from("conversations").delete().eq("id", convId);
+    setConversations((prev) => prev.filter((c) => c.id !== convId));
+    if (activeConv === convId) {
+      setActiveConv(null);
+      setMessages([]);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -143,25 +155,33 @@ const ChatPage = () => {
               </div>
             ) : (
               conversations.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActiveConv(c.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                    activeConv === c.id ? "bg-primary/10" : "hover:bg-secondary"
-                  }`}
-                >
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary shrink-0">
-                    {c.other_initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm truncate">{c.other_name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {c.last_message_at
-                        ? new Date(c.last_message_at).toLocaleDateString()
-                        : "No messages yet"}
+                <div key={c.id} className="flex items-center group">
+                  <button
+                    onClick={() => setActiveConv(c.id)}
+                    className={`flex-1 flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      activeConv === c.id ? "bg-primary/10" : "hover:bg-secondary"
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                      {c.other_initials}
                     </div>
-                  </div>
-                </button>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-sm truncate">{c.other_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {c.last_message_at
+                          ? new Date(c.last_message_at).toLocaleDateString()
+                          : "No messages yet"}
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteConversation(c.id); }}
+                    className="p-2 mr-2 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all"
+                    title="Delete conversation"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               ))
             )}
           </div>
@@ -179,6 +199,13 @@ const ChatPage = () => {
                   {activeConvData.other_initials}
                 </div>
                 <span className="font-medium text-sm flex-1">{activeConvData.other_name}</span>
+                <button
+                  onClick={() => deleteConversation(activeConv)}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                  title="Delete conversation"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
