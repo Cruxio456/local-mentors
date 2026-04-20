@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import FindMentorPage from "./pages/FindMentorPage";
 import BecomeMentorPage from "./pages/BecomeMentorPage";
 import AuthPage from "./pages/AuthPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ChatPage from "./pages/ChatPage";
 import MentorProfilePage from "./pages/MentorProfilePage";
 import DashboardPage from "./pages/DashboardPage";
