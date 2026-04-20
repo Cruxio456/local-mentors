@@ -174,6 +174,12 @@ const AuthPage = () => {
                           className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors"
                         />
                       </div>
+                      <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
+                        <span className="font-medium text-primary">Verification required:</span>{" "}
+                        After signing up, you'll be asked to upload a government ID and at least
+                        one teaching certificate. Your profile becomes visible to learners once an
+                        admin approves your documents.
+                      </div>
                     </>
                   )}
                 </>
