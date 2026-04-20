@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Calendar, MessageCircle, User, Clock, MapPin,
-  Edit2, Trash2, BookOpen, Star, AlertTriangle,
+  Edit2, Trash2, BookOpen, Star, AlertTriangle, RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,6 +50,10 @@ const DashboardPage = () => {
   const [editBio, setEditBio] = useState("");
   const [editLocation, setEditLocation] = useState("");
   const [saving, setSaving] = useState(false);
+  const [switchDialogOpen, setSwitchDialogOpen] = useState(false);
+  const [switchingRole, setSwitchingRole] = useState(false);
+  const [switchHourlyRate, setSwitchHourlyRate] = useState("");
+  const [switchSkills, setSwitchSkills] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -110,6 +114,45 @@ const DashboardPage = () => {
       window.location.reload();
     } else {
       toast({ title: "Error updating profile", variant: "destructive" });
+    }
+  };
+
+  const handleSwitchRole = async () => {
+    if (!profile) return;
+    const newRole = profile.user_role === "mentor" ? "student" : "mentor";
+    setSwitchingRole(true);
+
+    const updates: {
+      user_role: "student" | "mentor";
+      hourly_rate?: number;
+      skills?: string[];
+    } = { user_role: newRole };
+    if (newRole === "mentor") {
+      const rate = parseInt(switchHourlyRate);
+      if (!rate || rate < 100) {
+        toast({ title: "Please enter a valid hourly rate (min ₹100)", variant: "destructive" });
+        setSwitchingRole(false);
+        return;
+      }
+      updates.hourly_rate = rate;
+      const skillsArr = switchSkills.split(",").map((s) => s.trim()).filter(Boolean);
+      if (skillsArr.length) updates.skills = skillsArr;
+    }
+
+    const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
+    setSwitchingRole(false);
+
+    if (error) {
+      toast({ title: "Failed to switch role", description: error.message, variant: "destructive" });
+    } else {
+      toast({
+        title: `You're now a ${newRole}`,
+        description: newRole === "mentor" ? "Start sharing your skills!" : "Find a mentor and keep learning.",
+      });
+      setSwitchDialogOpen(false);
+      setSwitchHourlyRate("");
+      setSwitchSkills("");
+      window.location.reload();
     }
   };
 
@@ -346,6 +389,13 @@ const DashboardPage = () => {
                     >
                       <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                     </button>
+                    <button
+                      onClick={() => setSwitchDialogOpen(true)}
+                      className="w-full mt-2 py-2 rounded-lg border border-primary/30 hover:bg-primary/10 text-primary text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Switch to {profile.user_role === "mentor" ? "Learner" : "Mentor"}
+                    </button>
                   </>
                 )}
               </div>
@@ -405,6 +455,58 @@ const DashboardPage = () => {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleting ? "Deleting..." : "Delete my account"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={switchDialogOpen} onOpenChange={setSwitchDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Switch to {profile.user_role === "mentor" ? "Learner" : "Mentor"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {profile.user_role === "mentor"
+                ? "You'll switch from teaching to learning. Your mentor profile (rate & skills) is kept and will reactivate if you switch back."
+                : "Set your hourly rate and skills to start offering sessions to learners."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {profile.user_role === "student" && (
+            <div className="space-y-3 py-2">
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
+                  Hourly Rate (₹)
+                </label>
+                <input
+                  type="number"
+                  min="100"
+                  value={switchHourlyRate}
+                  onChange={(e) => setSwitchHourlyRate(e.target.value)}
+                  placeholder="e.g. 800"
+                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm outline-none focus:border-primary/50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
+                  Skills (comma separated)
+                </label>
+                <input
+                  type="text"
+                  value={switchSkills}
+                  onChange={(e) => setSwitchSkills(e.target.value)}
+                  placeholder="e.g. Music, Guitar, Vocals"
+                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm outline-none focus:border-primary/50"
+                />
+              </div>
+            </div>
+          )}
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={switchingRole}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSwitchRole} disabled={switchingRole}>
+              {switchingRole ? "Switching..." : "Confirm switch"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

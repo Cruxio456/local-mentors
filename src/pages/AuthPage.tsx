@@ -8,7 +8,7 @@ import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -22,6 +22,9 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const isLogin = mode === "login";
+  const isForgot = mode === "forgot";
+
   useEffect(() => {
     if (user) navigate("/");
   }, [user, navigate]);
@@ -32,7 +35,13 @@ const AuthPage = () => {
     setMessage("");
     setLoading(true);
 
-    if (isLogin) {
+    if (isForgot) {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) setError(error.message);
+      else setMessage("Check your email for the password reset link.");
+    } else if (isLogin) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
       else navigate("/");
@@ -56,6 +65,12 @@ const AuthPage = () => {
     setLoading(false);
   };
 
+  const switchMode = (next: "login" | "signup" | "forgot") => {
+    setMode(next);
+    setError("");
+    setMessage("");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -67,31 +82,37 @@ const AuthPage = () => {
         >
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">
-              {isLogin ? "Welcome back" : "Join Local Mentor"}
+              {isForgot ? "Reset your password" : isLogin ? "Welcome back" : "Join Local Mentor"}
             </h1>
             <p className="text-muted-foreground text-sm">
-              {isLogin ? "Sign in to continue learning" : "Create your account to get started"}
+              {isForgot
+                ? "Enter your email and we'll send you a reset link"
+                : isLogin
+                ? "Sign in to continue learning"
+                : "Create your account to get started"}
             </p>
           </div>
 
           <div className="gradient-card rounded-2xl border border-border/50 p-8 shadow-card">
             {/* Toggle */}
-            <div className="flex rounded-lg bg-secondary p-1 mb-6">
-              {(["Sign In", "Sign Up"] as const).map((label, i) => (
-                <button
-                  key={label}
-                  onClick={() => { setIsLogin(i === 0); setError(""); setMessage(""); }}
-                  className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
-                    (i === 0 ? isLogin : !isLogin) ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            {!isForgot && (
+              <div className="flex rounded-lg bg-secondary p-1 mb-6">
+                {(["Sign In", "Sign Up"] as const).map((label, i) => (
+                  <button
+                    key={label}
+                    onClick={() => switchMode(i === 0 ? "login" : "signup")}
+                    className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
+                      (i === 0 ? isLogin : !isLogin) ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+              {!isLogin && !isForgot && (
                 <>
                   <div>
                     <label className="block text-sm font-medium mb-1.5">Full Name</label>
@@ -170,27 +191,40 @@ const AuthPage = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    minLength={6}
-                    className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors pr-11"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+              {!isForgot && (
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-sm font-medium">Password</label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        onClick={() => switchMode("forgot")}
+                        className="text-xs text-primary hover:underline font-medium"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      minLength={6}
+                      className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors pr-11"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {error && (
                 <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3">
@@ -210,9 +244,19 @@ const AuthPage = () => {
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-3.5 rounded-lg gradient-accent font-bold text-accent-foreground shadow-glow flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+                {loading ? "Please wait..." : isForgot ? "Send Reset Link" : isLogin ? "Sign In" : "Create Account"}
                 {!loading && <ArrowRight className="w-4 h-4" />}
               </motion.button>
+
+              {isForgot && (
+                <button
+                  type="button"
+                  onClick={() => switchMode("login")}
+                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  ← Back to sign in
+                </button>
+              )}
             </form>
           </div>
         </motion.div>
