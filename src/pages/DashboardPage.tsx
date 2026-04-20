@@ -459,6 +459,58 @@ const DashboardPage = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={switchDialogOpen} onOpenChange={setSwitchDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Switch to {profile.user_role === "mentor" ? "Learner" : "Mentor"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {profile.user_role === "mentor"
+                ? "You'll switch from teaching to learning. Your mentor profile (rate & skills) is kept and will reactivate if you switch back."
+                : "Set your hourly rate and skills to start offering sessions to learners."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {profile.user_role === "student" && (
+            <div className="space-y-3 py-2">
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
+                  Hourly Rate (₹)
+                </label>
+                <input
+                  type="number"
+                  min="100"
+                  value={switchHourlyRate}
+                  onChange={(e) => setSwitchHourlyRate(e.target.value)}
+                  placeholder="e.g. 800"
+                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm outline-none focus:border-primary/50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
+                  Skills (comma separated)
+                </label>
+                <input
+                  type="text"
+                  value={switchSkills}
+                  onChange={(e) => setSwitchSkills(e.target.value)}
+                  placeholder="e.g. Music, Guitar, Vocals"
+                  className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm outline-none focus:border-primary/50"
+                />
+              </div>
+            </div>
+          )}
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={switchingRole}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSwitchRole} disabled={switchingRole}>
+              {switchingRole ? "Switching..." : "Confirm switch"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
