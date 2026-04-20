@@ -28,6 +28,7 @@ const App = () => (
             <Route path="/find" element={<FindMentorPage />} />
             <Route path="/teach" element={<BecomeMentorPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/mentor/:id" element={<MentorProfilePage />} />

@@ -8,7 +8,7 @@ import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -21,6 +21,9 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const isLogin = mode === "login";
+  const isForgot = mode === "forgot";
 
   useEffect(() => {
     if (user) navigate("/");
