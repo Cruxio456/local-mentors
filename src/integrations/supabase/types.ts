@@ -150,9 +150,11 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          certificate_urls: string[] | null
           created_at: string
           hourly_rate: number | null
           id: string
+          id_document_url: string | null
           is_available: boolean | null
           location: string | null
           name: string
@@ -162,13 +164,18 @@ export type Database = {
           updated_at: string
           user_id: string | null
           user_role: Database["public"]["Enums"]["user_role"]
+          verification_notes: string | null
+          verification_status: Database["public"]["Enums"]["verification_status"]
+          verified_at: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          certificate_urls?: string[] | null
           created_at?: string
           hourly_rate?: number | null
           id?: string
+          id_document_url?: string | null
           is_available?: boolean | null
           location?: string | null
           name: string
@@ -178,13 +185,18 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           user_role: Database["public"]["Enums"]["user_role"]
+          verification_notes?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verified_at?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          certificate_urls?: string[] | null
           created_at?: string
           hourly_rate?: number | null
           id?: string
+          id_document_url?: string | null
           is_available?: boolean | null
           location?: string | null
           name?: string
@@ -194,6 +206,30 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           user_role?: Database["public"]["Enums"]["user_role"]
+          verification_notes?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -206,6 +242,13 @@ export type Database = {
         Args: { target_profile_id: string }
         Returns: boolean
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_conversation_participant: {
         Args: { conv_id: string }
         Returns: boolean
@@ -213,6 +256,7 @@ export type Database = {
       is_own_profile: { Args: { profile_id: string }; Returns: boolean }
     }
     Enums: {
+      app_role: "admin" | "moderator" | "user"
       booking_status:
         | "pending"
         | "accepted"
@@ -220,6 +264,7 @@ export type Database = {
         | "completed"
         | "cancelled"
       user_role: "student" | "mentor"
+      verification_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -347,6 +392,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "moderator", "user"],
       booking_status: [
         "pending",
         "accepted",
@@ -355,6 +401,7 @@ export const Constants = {
         "cancelled",
       ],
       user_role: ["student", "mentor"],
+      verification_status: ["pending", "approved", "rejected"],
     },
   },
 } as const

@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import MentorVerification from "@/components/MentorVerification";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
@@ -219,6 +220,8 @@ const DashboardPage = () => {
             </p>
           </motion.div>
 
+          {/* Mentor verification banner */}
+          <MentorVerification profile={profile} onUpdated={() => window.location.reload()} />
           {/* Stats row */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={1}
