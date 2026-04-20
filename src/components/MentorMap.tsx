@@ -1,16 +1,16 @@
-import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 
-// Fix default marker icons
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+// Fix default marker icons (Vite/webpack break the default asset paths)
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
 interface MentorMapProps {
@@ -47,40 +47,71 @@ const cityCoords: Record<string, [number, number]> = {
   goa: [15.2993, 74.124],
   surat: [21.1702, 72.8311],
   visakhapatnam: [17.6868, 83.2185],
+  gurgaon: [28.4595, 77.0266],
+  gurugram: [28.4595, 77.0266],
+  noida: [28.5355, 77.391],
+  faridabad: [28.4089, 77.3178],
+  coimbatore: [11.0168, 76.9558],
 };
 
-const getCoords = (location: string): [number, number] | null => {
+// Stable pseudo-random offset based on id, so unknown locations keep their spot
+const fallbackCoords = (seed: string): [number, number] => {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+  const lat = 20.5 + ((Math.abs(h) % 800) / 100); // 20.5 - 28.5
+  const lng = 73 + ((Math.abs(h >> 8) % 1200) / 100); // 73 - 85
+  return [lat, lng];
+};
+
+const getCoords = (location: string, id: string): [number, number] => {
   const lower = location.toLowerCase().trim();
   for (const [city, coords] of Object.entries(cityCoords)) {
     if (lower.includes(city)) return coords;
   }
-  // Random offset around India center for unknown locations
-  return [20.5 + Math.random() * 8, 73 + Math.random() * 10];
+  return fallbackCoords(id);
+};
+
+// Forces Leaflet to recalculate size once the container is laid out.
+// Critical when the map is inside a tab, suspense boundary, or any container
+// that may have had zero height at mount time.
+const InvalidateSize = () => {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 100);
+    return () => clearTimeout(t);
+  }, [map]);
+  return null;
 };
 
 const MentorMap = ({ mentors }: MentorMapProps) => {
   const mappedMentors = mentors
     .filter((m) => m.location)
-    .map((m) => ({
-      ...m,
-      coords: getCoords(m.location!),
-    }))
-    .filter((m) => m.coords !== null);
+    .map((m) => ({ ...m, coords: getCoords(m.location!, m.id) }));
 
   return (
-    <div className="rounded-xl overflow-hidden border border-border/50 shadow-card" style={{ height: 420 }}>
+    <div
+      className="rounded-xl overflow-hidden border border-border/50 shadow-card relative"
+      style={{ height: 480 }}
+    >
+      {mappedMentors.length === 0 && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[400] bg-background/90 backdrop-blur px-3 py-1.5 rounded-full text-xs text-muted-foreground border border-border/50">
+          No mentors with a location to plot
+        </div>
+      )}
       <MapContainer
         center={[22.5, 78.9]}
         zoom={5}
         style={{ height: "100%", width: "100%" }}
-        scrollWheelZoom={true}
+        scrollWheelZoom
       >
+        <InvalidateSize />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
         />
         {mappedMentors.map((m) => (
-          <Marker key={m.id} position={m.coords!}>
+          <Marker key={m.id} position={m.coords}>
             <Popup>
               <div className="text-sm min-w-[160px]">
                 <Link to={`/mentor/${m.id}`} className="font-bold text-primary hover:underline block">
@@ -94,7 +125,11 @@ const MentorMap = ({ mentors }: MentorMapProps) => {
                   </span>
                   <span className="font-semibold">₹{m.hourly_rate || 0}/hr</span>
                 </div>
-                <span className={`text-xs mt-1 inline-block ${m.is_available ? "text-green-600" : "text-red-500"}`}>
+                <span
+                  className={`text-xs mt-1 inline-block ${
+                    m.is_available ? "text-green-600" : "text-red-500"
+                  }`}
+                >
                   {m.is_available ? "● Available" : "● Booked"}
                 </span>
               </div>
