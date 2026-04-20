@@ -126,8 +126,8 @@ const MentorMap = ({ mentors }: MentorMapProps) => {
                   <span className="font-semibold">₹{m.hourly_rate || 0}/hr</span>
                 </div>
                 <span
-                  className={`text-xs mt-1 inline-block ${
-                    m.is_available ? "text-green-600" : "text-red-500"
+                  className={`text-xs mt-1 inline-block font-medium ${
+                    m.is_available ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {m.is_available ? "● Available" : "● Booked"}
