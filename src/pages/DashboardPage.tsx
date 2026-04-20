@@ -389,6 +389,13 @@ const DashboardPage = () => {
                     >
                       <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                     </button>
+                    <button
+                      onClick={() => setSwitchDialogOpen(true)}
+                      className="w-full mt-2 py-2 rounded-lg border border-primary/30 hover:bg-primary/10 text-primary text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Switch to {profile.user_role === "mentor" ? "Learner" : "Mentor"}
+                    </button>
                   </>
                 )}
               </div>
