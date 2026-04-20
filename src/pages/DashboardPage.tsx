@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Calendar, MessageCircle, User, Clock, MapPin,
-  Edit2, Trash2, BookOpen, Star, AlertTriangle,
+  Edit2, Trash2, BookOpen, Star, AlertTriangle, RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,6 +50,10 @@ const DashboardPage = () => {
   const [editBio, setEditBio] = useState("");
   const [editLocation, setEditLocation] = useState("");
   const [saving, setSaving] = useState(false);
+  const [switchDialogOpen, setSwitchDialogOpen] = useState(false);
+  const [switchingRole, setSwitchingRole] = useState(false);
+  const [switchHourlyRate, setSwitchHourlyRate] = useState("");
+  const [switchSkills, setSwitchSkills] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -110,6 +114,41 @@ const DashboardPage = () => {
       window.location.reload();
     } else {
       toast({ title: "Error updating profile", variant: "destructive" });
+    }
+  };
+
+  const handleSwitchRole = async () => {
+    if (!profile) return;
+    const newRole = profile.user_role === "mentor" ? "student" : "mentor";
+    setSwitchingRole(true);
+
+    const updates: Record<string, unknown> = { user_role: newRole };
+    if (newRole === "mentor") {
+      const rate = parseInt(switchHourlyRate);
+      if (!rate || rate < 100) {
+        toast({ title: "Please enter a valid hourly rate (min ₹100)", variant: "destructive" });
+        setSwitchingRole(false);
+        return;
+      }
+      updates.hourly_rate = rate;
+      const skillsArr = switchSkills.split(",").map((s) => s.trim()).filter(Boolean);
+      if (skillsArr.length) updates.skills = skillsArr;
+    }
+
+    const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
+    setSwitchingRole(false);
+
+    if (error) {
+      toast({ title: "Failed to switch role", description: error.message, variant: "destructive" });
+    } else {
+      toast({
+        title: `You're now a ${newRole}`,
+        description: newRole === "mentor" ? "Start sharing your skills!" : "Find a mentor and keep learning.",
+      });
+      setSwitchDialogOpen(false);
+      setSwitchHourlyRate("");
+      setSwitchSkills("");
+      window.location.reload();
     }
   };
 
