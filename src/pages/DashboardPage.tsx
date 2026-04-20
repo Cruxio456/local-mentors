@@ -122,7 +122,11 @@ const DashboardPage = () => {
     const newRole = profile.user_role === "mentor" ? "student" : "mentor";
     setSwitchingRole(true);
 
-    const updates: Record<string, unknown> = { user_role: newRole };
+    const updates: {
+      user_role: "student" | "mentor";
+      hourly_rate?: number;
+      skills?: string[];
+    } = { user_role: newRole };
     if (newRole === "mentor") {
       const rate = parseInt(switchHourlyRate);
       if (!rate || rate < 100) {
