@@ -220,6 +220,8 @@ const DashboardPage = () => {
             </p>
           </motion.div>
 
+          {/* Mentor verification banner */}
+          <MentorVerification profile={profile} onUpdated={() => window.location.reload()} />
           {/* Stats row */}
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={1}
