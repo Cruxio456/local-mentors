@@ -36,7 +36,7 @@ const HeroSection = () => {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)]"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-lg gradient-accent font-semibold text-accent-foreground shadow-glow transition-shadow hover:shadow-[0_0_60px_hsl(152_60%_42%/0.25)] mx-[2px] border-none"
                 >
                   Find a Mentor
                 </motion.button>
