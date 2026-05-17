@@ -128,12 +128,18 @@ const BookSessionDialog = ({ open, onClose, mentor }: BookSessionDialogProps) =>
                   <label className="flex items-center gap-2 text-sm font-medium mb-2">
                     <Clock className="w-4 h-4 text-primary" /> Select Time
                   </label>
-                  <input
-                    type="time"
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg bg-background border border-border focus:border-primary/50 outline-none text-sm transition-colors"
-                  />
+                  <div className="grid grid-cols-3 gap-2">
+                    {["09:00","10:00","11:00","12:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"].map((slot) => (
+                      <button
+                        key={slot}
+                        type="button"
+                        onClick={() => setSelectedTime(slot)}
+                        className={`px-2 py-2 rounded-lg text-sm font-medium border transition-all ${selectedTime === slot ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:border-primary/50 text-foreground"}`}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
