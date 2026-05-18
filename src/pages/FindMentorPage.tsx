@@ -22,7 +22,7 @@ interface MentorProfile {
   avatar_url: string | null;
 }
 
-const categories = ["All", "Music", "Coding", "Art", "Language", "Fitness", "Cooking"];
+const categories = ["All", "Music", "Coding", "Art", "Language", "Fitness", "Cooking", "Dance"];
 
 const MentorCard = ({
   mentor,
